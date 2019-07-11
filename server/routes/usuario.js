@@ -2,9 +2,10 @@ const express = require('express');
 const Usuario = require('../models/usuario');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
+const { verificarToken, verificaAdminRole } = require('../middlewares/autenticacion');
 const app = express();
 
-app.get('/usuario', (req, res) => {
+app.get('/usuario', verificarToken , (req, res) => {
     // Recupero parametros desde el url para limitar la consulta
     // Si no los trae usa los especificados abajo por defecto
     let desde = Number(req.query.desde) || 0;
@@ -36,7 +37,7 @@ app.get('/usuario', (req, res) => {
         });
 });
 
-app.post('/usuario', (req, res) => {
+app.post('/usuario', [verificarToken, verificaAdminRole], (req, res) => {
     // Recupera los datos desde la peticion
     const body = req.body;
 
@@ -67,7 +68,7 @@ app.post('/usuario', (req, res) => {
     });
 });
 
-app.put('/usuario/:id', (req, res) => {
+app.put('/usuario/:id', [verificarToken, verificaAdminRole], (req, res) => {
     const { id } = req.params;
     const body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
 
@@ -121,7 +122,7 @@ app.put('/usuario/:id', (req, res) => {
 //     });
 // });
 
-app.delete('/usuario/:id',(req, res) => {
+app.delete('/usuario/:id', [verificarToken, verificaAdminRole], (req, res) => {
     const { id } = req.params;
 
     const estado = {

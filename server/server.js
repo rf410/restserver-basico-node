@@ -7,10 +7,10 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.use(require('./routes/usuario'))
+// Configuración global de rutas
+app.use(require('./routes/index'));
 
-
-
+// Conexion a la db
 mongoose.connect(process.env.URLDB, {
     useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false }, (err , res)=>{
     if (err) throw err;
